@@ -67,6 +67,8 @@ class CoverageNavigatorTester(Node):
         goal_msg = NavigateCompleteCoverage.Goal()
         goal_msg.frame_id = 'map'
         goal_msg.polygons.append(self.toPolygon(field))
+        for point in goal_msg.polygons[-1].points:
+            print(f"X: {point.x}, Y: {point.y}")
 
         print('Navigating to with field of size: ' + str(len(field)) + '...')
         send_goal_future = self.coverage_client.send_goal_async(goal_msg,

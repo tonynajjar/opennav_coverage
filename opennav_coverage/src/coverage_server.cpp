@@ -151,6 +151,12 @@ void CoverageServer::computeCoveragePath()
   auto goal = action_server_->get_current_goal();
   auto result = std::make_shared<ComputeCoveragePath::Result>();
 
+    for (const auto& polygon : goal->polygons) {
+      for (const auto& coordinate : polygon.coordinates) {
+        RCLCPP_INFO(get_logger(), "Coordinate: Axis1: %f, Axis2: %f", coordinate.axis1, coordinate.axis2);
+      }
+    }
+
   if (!action_server_ || !action_server_->is_server_active()) {
     RCLCPP_DEBUG(get_logger(), "Action server unavailable or inactive. Stopping.");
     return;
@@ -180,10 +186,16 @@ void CoverageServer::computeCoveragePath()
       master_field = util::getFieldFromGoal(goal);
       master_field.setCRS(goal->frame_id);
       frame_id = goal->frame_id;
+      RCLCPP_INFO(
+        get_logger(),
+        "Generated Field with area %f", master_field.getArea());
     }
 
     if (!cartesian_frame_) {
       f2c::Transform::transformToUTM(master_field);
+      RCLCPP_INFO(
+        get_logger(),
+        "not cartesian frame");
     }
     field = master_field.field.getGeometry(0);
 
